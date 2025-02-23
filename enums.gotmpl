@@ -1,0 +1,37 @@
+package {{.Package}}
+
+import "fmt"
+{{ range .Enums }}
+{{$type := .Type}}
+var (
+{{- range $value, $name := .Items }}
+    {{$type}}{{$name}} = {{$type}}{ "{{$value}}" }
+{{- end }}
+)
+
+type {{.Value}} string
+
+// {{.Description}}
+type {{.Type}} struct {
+   value {{.Value}}
+}
+
+// String returns the display name of the {{.Type}}.
+func (gt {{.Type}}) String() string {
+    return {{.SourceName}}[string(gt.value)]
+}
+
+// Value returns the value of the {{.Type}}.
+func (gt {{.Type}}) Value() string {
+    return string(gt.value)
+}
+
+// Parse{{.Type}} parses a value into a {{.Type}}.
+// The error can be ignored if the zero value is desireable.
+func Parse{{.Type}}(val string) ({{.Type}}, error) {
+    if _, ok := {{.SourceName}}[val]; ok {
+        return {{.Type}}{ {{.Value}}(val) },nil
+    }
+    return {{.Type}}{}, fmt.Errorf("failed parsing {{.Type}}: invalid value %s", val)
+}
+{{ end }}
