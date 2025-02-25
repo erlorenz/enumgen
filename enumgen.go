@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"embed"
 	"flag"
 	"fmt"
 	"go/parser"
@@ -20,6 +21,9 @@ type EnumData struct {
 	Description string
 	Items       map[string]string
 }
+
+//go:embed templates
+var templates embed.FS
 
 func main() {
 	pwd, _ := os.Getwd()
@@ -51,7 +55,7 @@ func main() {
 	// ------------------------------------------------------------------
 	// Parse Template
 
-	templ, err := template.ParseGlob("../*.gotmpl")
+	templ, err := template.ParseFS(templates, "*/**.gotmpl")
 	if err != nil {
 		fmt.Printf("enumgen: Error parsing template: %s\n", err.Error())
 		os.Exit(1)
